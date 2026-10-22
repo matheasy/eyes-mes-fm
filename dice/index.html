@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dice Roller | EyesIsWatchin App Lab</title>
+<meta name="description" content="Simple dice roller with running total.">
+<style>
+:root{--bg:#f5f6f8;--card:#fff;--fg:#1b1e24;--muted:#5b6370;--accent:#b4235a;--line:#dde1e7;--die:#fff;--die-fg:#1b1e24}
+@media (prefers-color-scheme:dark){:root{--bg:#121418;--card:#1c2027;--fg:#e9ecf1;--muted:#a3abb8;--accent:#f07aa6;--line:#2c323c;--die:#2c323c;--die-fg:#e9ecf1}}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:var(--bg);color:var(--fg);font:18px/1.4 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;display:flex;flex-direction:column;align-items:center;padding:1.5rem 1rem 3rem}
+h1{font-size:1.8rem;margin:0 0 .5rem;text-align:center}
+.total{font-size:2.2rem;font-weight:700;color:var(--accent);margin:0.5rem 0 1.5rem;text-align:center}
+.buttons{display:flex;flex-wrap:wrap;gap:.75rem;justify-content:center;max-width:32rem;margin-bottom:1.5rem}
+.buttons button{flex:1 1 4.5rem;min-width:4.5rem;min-height:4.5rem;font-size:1.6rem;font-weight:700;border:1px solid var(--line);border-radius:14px;background:var(--card);color:var(--fg);cursor:pointer;transition:transform .1s,border-color .15s}
+.buttons button:hover{border-color:var(--accent)}
+.buttons button:active{transform:scale(.96)}
+.dice{display:flex;flex-wrap:wrap;gap:.75rem;justify-content:center;min-height:5rem;margin-bottom:1.5rem}
+.die{width:4.2rem;height:4.2rem;display:grid;place-items:center;background:var(--die);color:var(--die-fg);border:1px solid var(--line);border-radius:12px;font-size:2rem;font-weight:700;box-shadow:0 2px 6px rgba(0,0,0,.08)}
+.actions{display:flex;gap:.75rem;flex-wrap:wrap;justify-content:center}
+.actions button{padding:.7rem 1.2rem;font-size:1rem;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--fg);cursor:pointer}
+.actions button:hover{border-color:var(--accent)}
+footer{margin-top:auto;padding-top:2rem;color:var(--muted);font-size:.9rem;text-align:center}
+footer a{color:var(--accent);text-decoration:none}
+</style>
+</head>
+<body>
+<h1>Dice Roller</h1>
+<div class="total" id="total">Total: 0</div>
+<div class="buttons" id="buttons"></div>
+<div class="dice" id="dice"></div>
+<div class="actions">
+<button id="clear" type="button">Clear total</button>
+</div>
+<footer><a href="/">← All apps</a></footer>
+<script>
+const totalEl = document.getElementById('total');
+const buttonsEl = document.getElementById('buttons');
+const diceEl = document.getElementById('dice');
+const clearBtn = document.getElementById('clear');
+let runningTotal = 0;
+
+function updateTotal() {
+  totalEl.textContent = 'Total: ' + runningTotal;
+}
+
+function rollDice(count) {
+  const results = [];
+  for (let i = 0; i < count; i++) {
+    results.push(Math.floor(Math.random() * 6) + 1);
+  }
+  const sum = results.reduce((a, b) => a + b, 0);
+  runningTotal += sum;
+  updateTotal();
+
+  diceEl.innerHTML = '';
+  results.forEach(n => {
+    const d = document.createElement('div');
+    d.className = 'die';
+    d.textContent = n;
+    diceEl.appendChild(d);
+  });
+}
+
+for (let n = 1; n <= 6; n++) {
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.textContent = n;
+  btn.title = 'Roll ' + n + ' dice';
+  btn.addEventListener('click', () => rollDice(n));
+  buttonsEl.appendChild(btn);
+}
+
+clearBtn.addEventListener('click', () => {
+  runningTotal = 0;
+  updateTotal();
+  diceEl.innerHTML = '';
+});
+</script>
+</body>
+</html>
